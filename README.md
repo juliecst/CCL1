@@ -5,6 +5,7 @@ This repository now contains a small browser-based visualisation tool that shows
 ## What it does
 
 - Shows the Thames centerline in Greater London.
+- Draws a baseline Thames river outline (both banks + filled channel) so the map has a geographic base reference.
 - Draws one projected pathway line per decade (2020 to 2100) on **both banks**.
 - Uses **lines only** (no flood-fill polygons).
 - Lets you change assumptions with sliders:
@@ -24,6 +25,7 @@ The app is intentionally scoped to only what is needed for London:
 - **Displayed quantity**: relative sea-level rise (meters), mapped to lateral line offsets for visual comparison
 
 Projection values are bundled as a compact decadal table for this London-focused interactive prototype (rather than loading all global data files).
+The river geometry is rendered from a Thames centerline template that is densified in-app for smoother, more nuanced projected lines.
 
 ## Run locally
 
