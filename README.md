@@ -32,7 +32,7 @@ Because this is a static site, you can run it with any simple HTTP server.
 Example:
 
 ```bash
-cd /tmp/workspace/juliecst/CCL1
+cd path/to/CCL1
 python -m http.server 8000
 ```
 
