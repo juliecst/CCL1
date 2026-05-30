@@ -1,0 +1,96 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f6f8fb;
+  color: #14213d;
+}
+
+header,
+.controls,
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+header h1 {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.5rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  background: #fff;
+  border: 1px solid #d9dfeb;
+  border-radius: 8px;
+}
+
+.controls .value {
+  font-size: 0.95rem;
+  color: #33415c;
+  margin-bottom: 0.5rem;
+}
+
+#downloadCsvBtn {
+  width: fit-content;
+  padding: 0.55rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #14213d;
+  background: #14213d;
+  color: #fff;
+  cursor: pointer;
+}
+
+#parameterSummary {
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: #33415c;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 1rem;
+}
+
+#map {
+  border: 1px solid #d9dfeb;
+  border-radius: 8px;
+  background: #f4f8ff;
+  overflow: hidden;
+}
+
+#mapSvg {
+  display: block;
+  width: 100%;
+  height: 70vh;
+  min-height: 480px;
+}
+
+aside {
+  background: #fff;
+  border: 1px solid #d9dfeb;
+  border-radius: 8px;
+  padding: 0.8rem;
+}
+
+aside h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  #mapSvg {
+    height: 60vh;
+  }
+}

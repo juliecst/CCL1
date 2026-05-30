@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thames Sea Level Pathways (AR6 / FACTS)</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Thames Sea Level Rise Pathways (Greater London)</h1>
+      <p>
+        Decadal line offsets on both banks based on AR6 scenario projections for
+        <strong>Tower Pier (PSMSL 336)</strong>.
+      </p>
+    </header>
+
+    <section class="controls" aria-label="Projection controls">
+      <label for="scenarioSlider">Scenario</label>
+      <input id="scenarioSlider" type="range" min="0" max="2" step="1" value="1" />
+      <div id="scenarioValue" class="value"></div>
+
+      <label for="percentileSlider">Percentile</label>
+      <input id="percentileSlider" type="range" min="0" max="2" step="1" value="1" />
+      <div id="percentileValue" class="value"></div>
+
+      <label for="scaleSlider">Visual offset scale (m line offset per 1 m rise)</label>
+      <input id="scaleSlider" type="range" min="200" max="1200" step="50" value="700" />
+      <div id="scaleValue" class="value"></div>
+
+      <button id="downloadCsvBtn" type="button">Download pathway lines CSV</button>
+
+      <div id="parameterSummary"></div>
+    </section>
+
+    <main>
+      <div id="map" role="region" aria-label="Map showing Thames pathway lines">
+        <svg id="mapSvg" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <aside>
+        <h2>How to use</h2>
+        <ul>
+          <li>Move <strong>Scenario</strong> slider to switch SSP pathways.</li>
+          <li>Move <strong>Percentile</strong> slider to switch low / median / high estimate.</li>
+          <li>Move <strong>Offset scale</strong> slider to control line spacing.</li>
+          <li>Click <strong>Download CSV</strong> to export all generated left/right pathway lines.</li>
+        </ul>
+      </aside>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
