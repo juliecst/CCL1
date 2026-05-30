@@ -32,7 +32,7 @@ const PROJECTION_M = {
   },
 };
 
-const THAMES_CENTERLINE = [
+const THAMES_CENTERLINE_COARSE = [
   [51.4825, -0.3012],
   [51.4808, -0.2844],
   [51.4782, -0.2567],
@@ -55,6 +55,8 @@ const THAMES_CENTERLINE = [
   [51.4948, 0.1456],
 ];
 
+const BASE_RIVER_HALF_WIDTH_M = 140;
+
 const scenarioSlider = document.getElementById("scenarioSlider");
 const percentileSlider = document.getElementById("percentileSlider");
 const scaleSlider = document.getElementById("scaleSlider");
@@ -70,6 +72,23 @@ const SVG_HEIGHT = 650;
 const PAD = 50;
 
 let latestRows = [];
+
+function densifyPolyline(latLngs, stepsPerSegment = 4) {
+  if (latLngs.length < 2) return latLngs.slice();
+  const output = [];
+  for (let i = 0; i < latLngs.length - 1; i += 1) {
+    const a = latLngs[i];
+    const b = latLngs[i + 1];
+    for (let s = 0; s < stepsPerSegment; s += 1) {
+      const t = s / stepsPerSegment;
+      output.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    }
+  }
+  output.push(latLngs[latLngs.length - 1]);
+  return output;
+}
+
+const THAMES_CENTERLINE = densifyPolyline(THAMES_CENTERLINE_COARSE, 5);
 
 function metersToLat(meters) {
   return meters / 111320;
@@ -142,6 +161,17 @@ function polylineToPath(latLngs, b) {
     .join(" ");
 }
 
+function polygonPathFromBanks(leftBank, rightBank, b) {
+  const ring = leftBank.concat([...rightBank].reverse());
+  return ring
+    .map(([lat, lon], i) => {
+      const [x, y] = projectPoint(lat, lon, b);
+      return `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`;
+    })
+    .join(" ")
+    .concat(" Z");
+}
+
 function addPath(pathData, color, width, dash, title) {
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("d", pathData);
@@ -150,6 +180,18 @@ function addPath(pathData, color, width, dash, title) {
   path.setAttribute("stroke-width", String(width));
   if (dash) path.setAttribute("stroke-dasharray", dash);
   path.setAttribute("stroke-linecap", "round");
+  const titleNode = document.createElementNS("http://www.w3.org/2000/svg", "title");
+  titleNode.textContent = title;
+  path.appendChild(titleNode);
+  mapSvg.appendChild(path);
+}
+
+function addPolygon(pathData, fill, stroke, width, title) {
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", pathData);
+  path.setAttribute("fill", fill);
+  path.setAttribute("stroke", stroke);
+  path.setAttribute("stroke-width", String(width));
   const titleNode = document.createElementNS("http://www.w3.org/2000/svg", "title");
   titleNode.textContent = title;
   path.appendChild(titleNode);
@@ -174,8 +216,11 @@ function updateMap() {
   mapSvg.replaceChildren();
   latestRows = [];
 
+  const baseLeft = offsetPolyline(THAMES_CENTERLINE, BASE_RIVER_HALF_WIDTH_M);
+  const baseRight = offsetPolyline(THAMES_CENTERLINE, -BASE_RIVER_HALF_WIDTH_M);
+
   const rises = PROJECTION_M[scenario][percentile];
-  const renderedLines = [THAMES_CENTERLINE];
+  const renderedLines = [THAMES_CENTERLINE, baseLeft, baseRight];
 
   const layerData = DECADES.map((year, idx) => {
     const riseM = rises[idx];
@@ -188,7 +233,16 @@ function updateMap() {
 
   const b = bounds(renderedLines);
 
-  addPath(polylineToPath(THAMES_CENTERLINE, b), "#0077b6", 4, null, "Thames centerline");
+  addPolygon(
+    polygonPathFromBanks(baseLeft, baseRight, b),
+    "#d7ebff",
+    "#7fb3d5",
+    1.5,
+    "Baseline Thames river outline"
+  );
+  addPath(polylineToPath(baseLeft, b), "#4f83a8", 1.5, null, "Northern riverbank");
+  addPath(polylineToPath(baseRight, b), "#4f83a8", 1.5, null, "Southern riverbank");
+  addPath(polylineToPath(THAMES_CENTERLINE, b), "#0077b6", 2.2, null, "Thames centerline");
 
   layerData.forEach(({ year, riseM, offsetM, left, right }) => {
     const color = colorByDecade(year);
